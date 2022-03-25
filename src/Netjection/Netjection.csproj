@@ -17,4 +17,14 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <DocumentationFile>bin\Debug\Netjection.xml</DocumentationFile>
+        <NoWarn>1701;1702;1591;1574</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DocumentationFile>bin\Release\Netjectionc.xml</DocumentationFile>
+        <NoWarn>1701;1702;1591;1574</NoWarn>
+    </PropertyGroup>
+
 </Project>

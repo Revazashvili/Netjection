@@ -5,7 +5,7 @@ using Netjection.Mappers;
 using Netjection.Services;
 using TypeFilter = Netjection.Services.TypeFilter;
 
-namespace Netjection.Extensions;
+namespace Netjection;
 
 /// <summary>
 /// Extension class for <see cref="IServiceCollection"/>.

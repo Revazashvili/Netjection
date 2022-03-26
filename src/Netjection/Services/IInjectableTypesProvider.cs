@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace Netjection.Services;
 
-public interface IInjectableTypesProvider
+internal interface IInjectableTypesProvider
 {
     IEnumerable<Type> Provide(Assembly assembly);
 }

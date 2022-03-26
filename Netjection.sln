@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Netjection", "src\Netjectio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Netjection.UnitTests", "tests\Netjection.UnitTests\Netjection.UnitTests.csproj", "{A43EABBB-9868-4A55-B64E-7012B7EAFC53}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{E42AC830-710C-4463-A6D5-BA85BC871B3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Netjection.WorkerService", "samples\Netjection.WorkerService\Netjection.WorkerService.csproj", "{43D04C2B-3061-4864-AFFD-040892E845BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +26,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{640B44FC-629C-4036-8201-94A27C116724} = {97600C0B-1B2F-46EA-B4C4-856E629D3A02}
 		{A43EABBB-9868-4A55-B64E-7012B7EAFC53} = {268FD7AF-C431-47D9-B7EF-839350E07FC3}
+		{43D04C2B-3061-4864-AFFD-040892E845BD} = {E42AC830-710C-4463-A6D5-BA85BC871B3B}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{640B44FC-629C-4036-8201-94A27C116724}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -32,5 +37,9 @@ Global
 		{A43EABBB-9868-4A55-B64E-7012B7EAFC53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A43EABBB-9868-4A55-B64E-7012B7EAFC53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A43EABBB-9868-4A55-B64E-7012B7EAFC53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43D04C2B-3061-4864-AFFD-040892E845BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43D04C2B-3061-4864-AFFD-040892E845BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43D04C2B-3061-4864-AFFD-040892E845BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43D04C2B-3061-4864-AFFD-040892E845BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

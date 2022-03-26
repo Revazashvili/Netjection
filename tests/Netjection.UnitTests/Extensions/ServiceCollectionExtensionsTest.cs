@@ -1,6 +1,5 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Netjection.Extensions;
 using Netjection.UnitTests.SampleServices;
 using Xunit;
 

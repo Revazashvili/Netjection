@@ -4,5 +4,5 @@ namespace Netjection.Services;
 
 internal interface IInjectableTypesProvider
 {
-    IEnumerable<Type> Provide(Assembly assembly);
+    IEnumerable<Type> Provide(Assembly assembly,Type? attributeType = null);
 }

@@ -1,7 +1,5 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Netjection.Mappers;
 using Netjection.Services;
 using TypeFilter = Netjection.Services.TypeFilter;
 

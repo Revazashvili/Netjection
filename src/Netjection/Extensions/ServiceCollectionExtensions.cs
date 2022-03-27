@@ -22,11 +22,16 @@ public static class ServiceCollectionExtensions
     /// <param name="assembly">Assembly to search for injectable services.</param>
     public static IServiceCollection InjectServices(this IServiceCollection services, Assembly assembly)
     {
-        var injectableTypes = InjectableTypesProvider.Provide(assembly);
-        TypeFilter.FilterByScope(injectableTypes, Lifetime.Singleton,assembly).Inject(services);
-        TypeFilter.FilterByScope(injectableTypes, Lifetime.Scoped,assembly).Inject(services);
-        TypeFilter.FilterByScope(injectableTypes, Lifetime.Transient,assembly).Inject(services);
+        InjectInjectableTypes(services, assembly);
         return services;
+    }
+
+    private static void InjectInjectableTypes(IServiceCollection services, Assembly assembly)
+    {
+        var injectableTypes = InjectableTypesProvider.Provide(assembly);
+        TypeFilter.FilterByScope(injectableTypes, Lifetime.Singleton, assembly).Inject(services);
+        TypeFilter.FilterByScope(injectableTypes, Lifetime.Scoped, assembly).Inject(services);
+        TypeFilter.FilterByScope(injectableTypes, Lifetime.Transient, assembly).Inject(services);
     }
 
     private static void Inject(this IEnumerable<DescriptorInfo> descriptorInfos,IServiceCollection services)

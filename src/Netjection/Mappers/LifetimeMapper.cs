@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Netjection.Mappers;
+namespace Netjection;
 
 internal static class LifetimeMapper
 {

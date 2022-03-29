@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Netjection.Mappers;
 using Xunit;
 
 namespace Netjection.UnitTests.Mappers;

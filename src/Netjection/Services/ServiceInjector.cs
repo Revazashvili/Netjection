@@ -1,8 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Netjection.Mappers;
 
-namespace Netjection.Services;
+namespace Netjection;
 
 internal static class ServiceInjector
 {

@@ -1,5 +1,4 @@
 using System.Reflection;
-using Netjection.Services;
 using Xunit;
 
 namespace Netjection.UnitTests.Services;

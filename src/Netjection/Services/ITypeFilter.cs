@@ -1,7 +1,6 @@
 using System.Reflection;
-using Netjection.Mappers;
 
-namespace Netjection.Services;
+namespace Netjection;
 
 internal interface ITypeFilter
 {

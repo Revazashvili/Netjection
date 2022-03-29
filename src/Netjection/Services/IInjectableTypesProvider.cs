@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Netjection.Services;
+namespace Netjection;
 
 internal interface IInjectableTypesProvider
 {

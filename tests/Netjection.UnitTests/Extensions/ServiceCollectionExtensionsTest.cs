@@ -50,4 +50,19 @@ public class ServiceCollectionExtensionsTest
         var serviceProvider = services.BuildServiceProvider();
         Assert.Equal(baseTypesCount,services.Count);
     }
+    
+    [Fact]
+    public void Should_Inject_And_Resolve_Scope_Base_Services()
+    {
+        var services = new ServiceCollection();
+        services.InjectServices(Assembly.GetExecutingAssembly());
+
+        var serviceProvider = services.BuildServiceProvider();
+        var singletonService = serviceProvider.GetService<ISingletonService>();
+        var scopedService = serviceProvider.GetService<IScopedService>();
+        var transientService = serviceProvider.GetService<ITransientService>();
+        Assert.NotNull(singletonService);
+        Assert.NotNull(scopedService);
+        Assert.NotNull(transientService);
+    }
 }

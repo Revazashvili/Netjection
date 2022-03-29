@@ -1,9 +1,5 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Netjection.Mappers;
-using Netjection.Services;
-using TypeFilter = Netjection.Services.TypeFilter;
 
 namespace Netjection;
 
@@ -22,16 +18,30 @@ public static class ServiceCollectionExtensions
     /// <param name="assembly">Assembly to search for injectable services.</param>
     public static IServiceCollection InjectServices(this IServiceCollection services, Assembly assembly)
     {
-        var injectableTypes = InjectableTypesProvider.Provide(assembly);
-        TypeFilter.FilterByScope(injectableTypes, Lifetime.Singleton,assembly).Inject(services);
-        TypeFilter.FilterByScope(injectableTypes, Lifetime.Scoped,assembly).Inject(services);
-        TypeFilter.FilterByScope(injectableTypes, Lifetime.Transient,assembly).Inject(services);
+        InjectInjectableTypes(services, assembly);
+        InjectByScope(services, assembly, new InjectAsSingleton());
+        InjectByScope(services, assembly, new InjectAsScoped());
+        InjectByScope(services, assembly, new InjectAsTransient());
         return services;
     }
 
-    private static void Inject(this IEnumerable<DescriptorInfo> descriptorInfos,IServiceCollection services)
+    private static void InjectByScope<T>(IServiceCollection services, Assembly assembly,T attribute) where T : InjectableBaseAttribute
     {
-        foreach (var descriptorInfo in descriptorInfos)
-            services.TryAdd(new ServiceDescriptor(descriptorInfo.ServiceType, descriptorInfo.ImplementationType,descriptorInfo.ServiceLifetime));
+        var injectableTypes = InjectableTypesProvider.Provide(assembly, typeof(T));
+        injectableTypes.Select(type => new DescriptorInfo
+        {
+            ServiceType = type,
+            ImplementationType = (type.GetCustomAttribute(typeof(T)) as T)?.ImplementationType
+                                 ?? assembly.GetTypes().FirstOrDefault(type1 => type1.Name == type.Name.Remove(0, 1))!,
+            ServiceLifetime = attribute.MapToServiceLifetime()
+        }).Inject(services);
+    }
+    
+    private static void InjectInjectableTypes(IServiceCollection services, Assembly assembly)
+    {
+        var injectableTypes = InjectableTypesProvider.Provide(assembly);
+        TypeFilter.FilterByScope(injectableTypes, Lifetime.Singleton, assembly).Inject(services);
+        TypeFilter.FilterByScope(injectableTypes, Lifetime.Scoped, assembly).Inject(services);
+        TypeFilter.FilterByScope(injectableTypes, Lifetime.Transient, assembly).Inject(services);
     }
 }

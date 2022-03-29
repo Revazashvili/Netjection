@@ -37,4 +37,32 @@ public class ServiceCollectionExtensionsTest
         var actual = firstService?.Test();
         Assert.Equal(expected,actual);
     }
+
+    [Fact]
+    public void Should_Equal_Assembly_And_Injected_Types_Count()
+    {
+        var baseTypesCount = Assembly.GetExecutingAssembly()
+            .GetTypes()
+            .Count(type => type.GetCustomAttributes(typeof(InjectableBaseAttribute), true).Length > 0);
+        
+        var services = new ServiceCollection();
+        services.InjectServices(Assembly.GetExecutingAssembly());
+        var serviceProvider = services.BuildServiceProvider();
+        Assert.Equal(baseTypesCount,services.Count);
+    }
+    
+    [Fact]
+    public void Should_Inject_And_Resolve_Scope_Base_Services()
+    {
+        var services = new ServiceCollection();
+        services.InjectServices(Assembly.GetExecutingAssembly());
+
+        var serviceProvider = services.BuildServiceProvider();
+        var singletonService = serviceProvider.GetService<ISingletonService>();
+        var scopedService = serviceProvider.GetService<IScopedService>();
+        var transientService = serviceProvider.GetService<ITransientService>();
+        Assert.NotNull(singletonService);
+        Assert.NotNull(scopedService);
+        Assert.NotNull(transientService);
+    }
 }

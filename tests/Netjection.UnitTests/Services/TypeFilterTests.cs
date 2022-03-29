@@ -1,9 +1,7 @@
 using System.Reflection;
-using Netjection.Services;
 using Xunit;
-using TypeFilter = Netjection.Services.TypeFilter;
 
-namespace Netjection.UnitTests.ServicesTests;
+namespace Netjection.UnitTests.Services;
 
 public class TypeFilterTests
 {

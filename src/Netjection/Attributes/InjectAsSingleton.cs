@@ -1,23 +1,14 @@
 namespace Netjection;
 
-[AttributeUsage(AttributeTargets.Interface)]
-public class InjectAsSingleton : Attribute
+public class InjectAsSingleton : InjectableBaseAttribute
 {
     /// <summary>
     /// Initializes a new instance of <see cref="InjectAsSingleton"/>.
     /// </summary>
-    public InjectAsSingleton() { }
+    public InjectAsSingleton() : base(default) { }
     
     /// <summary>
     /// Initializes a new instance of <see cref="InjectAsSingleton"/> with given implementation type.
     /// </summary>
-    public InjectAsSingleton(Type implementationType)
-    {
-        ImplementationType = implementationType;
-    }
-    
-    /// <summary>
-    /// Gets implementation type for target service.
-    /// </summary>
-    public Type? ImplementationType { get; }
+    public InjectAsSingleton(Type implementationType) : base(implementationType) { }
 }

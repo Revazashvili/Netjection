@@ -3,26 +3,22 @@ namespace Netjection;
 /// <summary>
 /// Marks target as injectable into IOC Container
 /// </summary>
-[AttributeUsage(AttributeTargets.Interface)]
-public class InjectableAttribute : Attribute
+public class InjectableAttribute : InjectableBaseAttribute
 {
     /// <summary>
     /// Initializes a new instance of <see cref="InjectableAttribute"/>.
     /// </summary>
-    public InjectableAttribute() { }
+    public InjectableAttribute() : base(default) { }
     
     /// <summary>
     /// Initializes a new instance of <see cref="InjectableAttribute"/> with given implementation type.
     /// </summary>
-    public InjectableAttribute(Type implementationType)
-    {
-        ImplementationType = implementationType;
-    }
+    public InjectableAttribute(Type implementationType) : base(implementationType) { }
 
     /// <summary>
     /// Initializes a new instance of <see cref="InjectableAttribute"/> with given lifetime.
     /// </summary>
-    public InjectableAttribute(Lifetime lifetime)
+    public InjectableAttribute(Lifetime lifetime) : base(default)
     {
         Lifetime = lifetime;
     }
@@ -30,16 +26,9 @@ public class InjectableAttribute : Attribute
     /// <summary>
     /// Initializes a new instance of <see cref="InjectableAttribute"/> with given implementation type and lifetime.
     /// </summary>
-    public InjectableAttribute(Type implementationType,Lifetime lifetime = Lifetime.Scoped)
-    {
-        ImplementationType = implementationType;
-        Lifetime = lifetime;
-    }
-
-    /// <summary>
-    /// Gets implementation type for target service.
-    /// </summary>
-    public Type? ImplementationType { get; }
+    public InjectableAttribute(Type implementationType,Lifetime lifetime = Lifetime.Scoped) 
+        : base(implementationType) 
+        => Lifetime = lifetime;
     
     /// <summary>
     /// Gets injected service life time.

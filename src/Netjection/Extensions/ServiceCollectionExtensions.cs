@@ -1,5 +1,6 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Netjection.Mappers;
 using Netjection.Services;
 using TypeFilter = Netjection.Services.TypeFilter;
 
@@ -21,9 +22,24 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection InjectServices(this IServiceCollection services, Assembly assembly)
     {
         InjectInjectableTypes(services, assembly);
+        InjectByScope(services, assembly, new InjectAsSingleton());
+        InjectByScope(services, assembly, new InjectAsScoped());
+        InjectByScope(services, assembly, new InjectAsTransient());
         return services;
     }
 
+    private static void InjectByScope<T>(IServiceCollection services, Assembly assembly,T attribute) where T : InjectableBaseAttribute
+    {
+        var injectableTypes = InjectableTypesProvider.Provide(assembly, typeof(T));
+        injectableTypes.Select(type => new DescriptorInfo
+        {
+            ServiceType = type,
+            ImplementationType = (type.GetCustomAttribute(typeof(T)) as T)?.ImplementationType
+                                 ?? assembly.GetTypes().FirstOrDefault(type1 => type1.Name == type.Name.Remove(0, 1))!,
+            ServiceLifetime = attribute.MapToServiceLifetime()
+        }).Inject(services);
+    }
+    
     private static void InjectInjectableTypes(IServiceCollection services, Assembly assembly)
     {
         var injectableTypes = InjectableTypesProvider.Provide(assembly);

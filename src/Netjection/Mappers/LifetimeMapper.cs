@@ -12,4 +12,13 @@ internal static class LifetimeMapper
             Lifetime.Transient => ServiceLifetime.Transient,
             _ => throw new Exception("can't match any service lifetime")
         };
+    
+    internal static ServiceLifetime MapToServiceLifetime<T>(this T attribute) where T : InjectableBaseAttribute =>
+        attribute switch
+        {
+            InjectAsSingleton asSingleton => ServiceLifetime.Singleton,
+            InjectAsScoped asScoped => ServiceLifetime.Scoped,
+            InjectAsTransient asTransient => ServiceLifetime.Transient,
+            _ => throw new Exception("can't match any service lifetime")
+        };
 }

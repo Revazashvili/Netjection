@@ -31,7 +31,7 @@ public class ProductService : IProductService { }
 ```
 
 ```c#
-// You can specify service lifetime.
+// You can specify implementation type.
 [Injectable(typeof(ConsoleLogger),Lifetime.Transient)]
 public interface ICustomLogger { }
 

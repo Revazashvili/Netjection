@@ -2,7 +2,7 @@ using System.Reflection;
 using Netjection.Services;
 using Xunit;
 
-namespace Netjection.UnitTests.ServicesTests;
+namespace Netjection.UnitTests.Services;
 
 public class TypeProviderTests
 {

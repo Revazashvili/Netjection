@@ -1,5 +1,8 @@
 namespace Netjection;
 
+/// <summary>
+/// Marks target as injectable into IOC Container with lifetime Singleton.
+/// </summary>
 public class InjectAsSingleton : InjectableBaseAttribute
 {
     /// <summary>

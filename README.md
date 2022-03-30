@@ -37,6 +37,28 @@ public interface ICustomLogger { }
 
 public class ConsoleLogger : ICustomLogger { }
 ```
+
+Or scope specific attributes
+```c#
+// Attribute without any parameter inject service as scoped
+// and implementation type will be interface name without "I" prefix.
+[InjectAsSingleton]
+public interface ISingletonService { }
+
+public class SingletonService : ISingletonService { }
+
+// You can specify implementation type.
+[InjectAsScoped(typeof(ScopedServiceV2))]
+public interface IScopedService { }
+
+public class ScopedServiceV2 : IScopedService { }
+
+[InjectAsTransient]
+public interface ITransientService { }
+
+public class TransientService : ITransientService { }
+```
+
 and then use extension method on IServiceCollection to inject all service
 ```c#
 using Netjection
@@ -46,6 +68,7 @@ public void ConfigureServices(IServiceCollection services)
     services.InjectServices(Assembly.GetExecutingAssembly());
 }
 ```
+
 
 ## Contributing
 

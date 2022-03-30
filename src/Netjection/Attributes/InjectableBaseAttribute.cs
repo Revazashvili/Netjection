@@ -7,7 +7,7 @@ namespace Netjection;
 [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class)]
 public class InjectableBaseAttribute : Attribute
 {
-    public InjectableBaseAttribute(Type? implementationType)
+    protected InjectableBaseAttribute(Type? implementationType)
     {
         ImplementationType = implementationType;
     }

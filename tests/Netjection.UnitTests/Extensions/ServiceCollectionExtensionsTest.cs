@@ -47,7 +47,6 @@ public class ServiceCollectionExtensionsTest
         
         var services = new ServiceCollection();
         services.InjectServices(Assembly.GetExecutingAssembly());
-        var serviceProvider = services.BuildServiceProvider();
         Assert.Equal(baseTypesCount,services.Count);
     }
     
@@ -64,5 +63,19 @@ public class ServiceCollectionExtensionsTest
         Assert.NotNull(singletonService);
         Assert.NotNull(scopedService);
         Assert.NotNull(transientService);
+    }
+    
+    [Fact]
+    public void Should_Inject_And_Resolve_Class_Without_Implementation()
+    {
+        var services = new ServiceCollection();
+        services.InjectServices(Assembly.GetExecutingAssembly());
+
+        var serviceProvider = services.BuildServiceProvider();
+        var dummyStorage = serviceProvider.GetService<DummyStorage>();
+        Assert.NotNull(dummyStorage);
+
+        var dummyDataCount = dummyStorage.GetDummyData();
+        Assert.Equal(5,dummyDataCount.Count());
     }
 }

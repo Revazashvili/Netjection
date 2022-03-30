@@ -25,18 +25,15 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static void InjectByScope<T>(IServiceCollection services, Assembly assembly,T attribute) where T : InjectableBaseAttribute
-    {
-        var injectableTypes = InjectableTypesProvider.Provide(assembly, typeof(T));
-        injectableTypes.Select(type => new DescriptorInfo
+    private static void InjectByScope<T>(IServiceCollection services, Assembly assembly,T attribute) where T : InjectableBaseAttribute =>
+        InjectableTypesProvider.Provide(assembly, typeof(T)).Select(type => new DescriptorInfo
         {
             ServiceType = type,
-            ImplementationType = (type.GetCustomAttribute(typeof(T)) as T)?.ImplementationType
-                                 ?? assembly.GetTypes().FirstOrDefault(type1 => type1.Name == type.Name.Remove(0, 1))!,
+            ImplementationType = type.IsInterface ? (type.GetCustomAttribute(typeof(T)) as T)?.ImplementationType
+                                                    ?? assembly.GetTypes().FirstOrDefault(type1 => type1.Name == type.Name.Remove(0, 1))! : type,
             ServiceLifetime = attribute.MapToServiceLifetime()
         }).Inject(services);
-    }
-    
+
     private static void InjectInjectableTypes(IServiceCollection services, Assembly assembly)
     {
         var injectableTypes = InjectableTypesProvider.Provide(assembly);

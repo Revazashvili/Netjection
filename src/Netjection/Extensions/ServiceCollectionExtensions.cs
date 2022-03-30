@@ -31,8 +31,8 @@ public static class ServiceCollectionExtensions
         injectableTypes.Select(type => new DescriptorInfo
         {
             ServiceType = type,
-            ImplementationType = (type.GetCustomAttribute(typeof(T)) as T)?.ImplementationType
-                                 ?? assembly.GetTypes().FirstOrDefault(type1 => type1.Name == type.Name.Remove(0, 1))!,
+            ImplementationType = type.IsInterface ? (type.GetCustomAttribute(typeof(T)) as T)?.ImplementationType
+                                 ?? assembly.GetTypes().FirstOrDefault(type1 => type1.Name == type.Name.Remove(0, 1))! : type,
             ServiceLifetime = attribute.MapToServiceLifetime()
         }).Inject(services);
     }

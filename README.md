@@ -59,6 +59,16 @@ public interface ITransientService { }
 public class TransientService : ITransientService { }
 ```
 
+can be used with classes
+
+```c#
+[InjectAsSingleton]
+public class DummyStorage
+{
+    public string GetDummyText() => "Some Dummy Text";
+}
+```
+
 and then use extension method on IServiceCollection to inject all service
 ```c#
 using Netjection

@@ -75,7 +75,7 @@ using Netjection
 
 public void ConfigureServices(IServiceCollection services)
 {
-    services.InjectServices(Assembly.GetExecutingAssembly());
+    services.InjectServices(Assembly.GetExecutingAssembly(),Assembly.GetAssembly(typeof(SingletonService)));
 }
 ```
 

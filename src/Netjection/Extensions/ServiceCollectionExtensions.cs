@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Netjection;
@@ -22,6 +23,7 @@ public static class ServiceCollectionExtensions
         InjectByScope(services, assembly, new InjectAsSingleton());
         InjectByScope(services, assembly, new InjectAsScoped());
         InjectByScope(services, assembly, new InjectAsTransient());
+        services.AddConfigurables(assembly);
         return services;
     }
 
@@ -40,5 +42,21 @@ public static class ServiceCollectionExtensions
         TypeFilter.FilterByScope(injectableTypes, Lifetime.Singleton, assembly).Inject(services);
         TypeFilter.FilterByScope(injectableTypes, Lifetime.Scoped, assembly).Inject(services);
         TypeFilter.FilterByScope(injectableTypes, Lifetime.Transient, assembly).Inject(services);
+    }
+
+    private static void AddConfigurables(this IServiceCollection services,Assembly assembly)
+    {
+        var configurableTypes = assembly.GetTypes()
+            .Where(type => type.GetCustomAttributes(typeof(ConfigureAttribute), true).Length > 0)
+            .AsEnumerable();
+        var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
+        foreach (var configurableType in configurableTypes)
+        {
+            var customAttribute = (configurableType.GetCustomAttribute(typeof(ConfigureAttribute)) as ConfigureAttribute)!;
+            var sectionName = customAttribute.SectionName ?? configurableType.Name;
+            var instance = Activator.CreateInstance(configurableType);
+            configuration.Bind(sectionName, instance);
+            services.AddSingleton(configurableType, instance);
+        }
     }
 }

@@ -1,5 +1,7 @@
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Netjection.UnitTests.Configurables;
 using Netjection.UnitTests.SampleServices;
 using Xunit;
 
@@ -7,6 +9,17 @@ namespace Netjection.UnitTests.Extensions;
 
 public class ServiceCollectionExtensionsTest
 {
+    private static ServiceCollection BuildServiceCollectionWithConfiguration()
+    {
+        var services = new ServiceCollection();
+        var configurationRoot = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+        services.AddScoped<IConfiguration>(implementationFactory: _ => configurationRoot);
+        return services;
+    }
+    
     [Fact]
     public void Should_Inject_All_Service()
     {
@@ -88,5 +101,27 @@ public class ServiceCollectionExtensionsTest
 
         var dummyDataCount = dummyStorage.GetDummyData();
         Assert.Equal(5,dummyDataCount.Count());
+    }
+    
+    [Fact]
+    public void Should_Inject_All_Types_Without_Exception()
+    {
+        var services = BuildServiceCollectionWithConfiguration();
+        services.InjectServices(Assembly.GetExecutingAssembly());
+    }
+
+
+    [Fact]
+    public void Should_Inject_And_Resolve()
+    {
+        var services = BuildServiceCollectionWithConfiguration();
+        services.InjectServices(Assembly.GetExecutingAssembly());
+
+        var serviceProvider = services.BuildServiceProvider();
+        var test = serviceProvider.GetService<Test>();
+        Assert.NotNull(test);
+        Assert.NotEmpty(test.Property1);
+        Assert.Equal(23,test.Property2);
+        Assert.NotEmpty(test.Property3);
     }
 }

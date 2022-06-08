@@ -16,14 +16,17 @@ public static class ServiceCollectionExtensions
     /// Injects <see cref="InjectableAttribute"/> decorated services from given assembly.
     /// </summary>
     /// <param name="services"><see cref="IServiceCollection"/>.</param>
-    /// <param name="assembly">Assembly to search for injectable services.</param>
-    public static IServiceCollection InjectServices(this IServiceCollection services, Assembly assembly)
+    /// <param name="assemblies">Assemblies to search for injectable services.</param>
+    public static IServiceCollection InjectServices(this IServiceCollection services, params Assembly[] assemblies)
     {
-        InjectInjectableTypes(services, assembly);
-        InjectByScope(services, assembly, new InjectAsSingleton());
-        InjectByScope(services, assembly, new InjectAsScoped());
-        InjectByScope(services, assembly, new InjectAsTransient());
-        services.AddConfigurables(assembly);
+        foreach (var assembly in assemblies)
+        {
+            InjectInjectableTypes(services, assembly);
+            InjectByScope(services, assembly, new InjectAsSingleton());
+            InjectByScope(services, assembly, new InjectAsScoped());
+            InjectByScope(services, assembly, new InjectAsTransient());
+            services.AddConfigurables(assembly);
+        }
         return services;
     }
 

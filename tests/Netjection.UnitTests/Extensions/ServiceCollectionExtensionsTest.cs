@@ -63,18 +63,6 @@ public class ServiceCollectionExtensionsTest
     }
 
     [Fact]
-    public void Should_Equal_Assembly_And_Injected_Types_Count()
-    {
-        var baseTypesCount = Assembly.GetExecutingAssembly()
-            .GetTypes()
-            .Count(type => type.GetCustomAttributes(typeof(InjectableBaseAttribute), true).Length > 0);
-        
-        var services = BuildServiceCollectionWithConfiguration();
-        services.InjectServices(Assembly.GetExecutingAssembly());
-        Assert.Equal(baseTypesCount,services.Count);
-    }
-    
-    [Fact]
     public void Should_Inject_And_Resolve_Scope_Base_Services()
     {
         var services = BuildServiceCollectionWithConfiguration();

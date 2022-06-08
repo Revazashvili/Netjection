@@ -23,14 +23,14 @@ public class ServiceCollectionExtensionsTest
     [Fact]
     public void Should_Inject_All_Service()
     {
-        var services = new ServiceCollection();
+        var services = BuildServiceCollectionWithConfiguration();
         services.InjectServices(Assembly.GetExecutingAssembly());
     }
 
     [Fact]
     public void Should_Inject_And_Resolve_Services()
     {
-        var services = new ServiceCollection();
+        var services = BuildServiceCollectionWithConfiguration();
         services.InjectServices(Assembly.GetExecutingAssembly());
 
         var serviceProvider = services.BuildServiceProvider();
@@ -41,7 +41,7 @@ public class ServiceCollectionExtensionsTest
     [Fact]
     public void Should_Inject_And_Resolve_Services_With_Two_Given_Assembly()
     {
-        var services = new ServiceCollection();
+        var services = BuildServiceCollectionWithConfiguration();
         services.InjectServices(Assembly.GetExecutingAssembly(),Assembly.GetCallingAssembly());
 
         var serviceProvider = services.BuildServiceProvider();
@@ -52,7 +52,7 @@ public class ServiceCollectionExtensionsTest
     [Fact]
     public void Should_Call_Resolved_Service_Method()
     {
-        var services = new ServiceCollection();
+        var services = BuildServiceCollectionWithConfiguration();
         services.InjectServices(Assembly.GetExecutingAssembly());
 
         var serviceProvider = services.BuildServiceProvider();
@@ -69,7 +69,7 @@ public class ServiceCollectionExtensionsTest
             .GetTypes()
             .Count(type => type.GetCustomAttributes(typeof(InjectableBaseAttribute), true).Length > 0);
         
-        var services = new ServiceCollection();
+        var services = BuildServiceCollectionWithConfiguration();
         services.InjectServices(Assembly.GetExecutingAssembly());
         Assert.Equal(baseTypesCount,services.Count);
     }
@@ -77,7 +77,7 @@ public class ServiceCollectionExtensionsTest
     [Fact]
     public void Should_Inject_And_Resolve_Scope_Base_Services()
     {
-        var services = new ServiceCollection();
+        var services = BuildServiceCollectionWithConfiguration();
         services.InjectServices(Assembly.GetExecutingAssembly());
 
         var serviceProvider = services.BuildServiceProvider();
@@ -92,7 +92,7 @@ public class ServiceCollectionExtensionsTest
     [Fact]
     public void Should_Inject_And_Resolve_Class_Without_Implementation()
     {
-        var services = new ServiceCollection();
+        var services = BuildServiceCollectionWithConfiguration();
         services.InjectServices(Assembly.GetExecutingAssembly());
 
         var serviceProvider = services.BuildServiceProvider();

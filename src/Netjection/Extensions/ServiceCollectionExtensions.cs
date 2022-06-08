@@ -51,8 +51,17 @@ public static class ServiceCollectionExtensions
     {
         var configurableTypes = assembly.GetTypes()
             .Where(type => type.GetCustomAttributes(typeof(ConfigureAttribute), true).Length > 0)
-            .AsEnumerable();
+            .ToList();
+        if (!configurableTypes.Any())
+            return;
+        
         var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
+
+        if (configuration is null)
+        {
+            throw new ArgumentNullException(nameof(IConfiguration));
+        }
+            
         foreach (var configurableType in configurableTypes)
         {
             var customAttribute = (configurableType.GetCustomAttribute(typeof(ConfigureAttribute)) as ConfigureAttribute)!;

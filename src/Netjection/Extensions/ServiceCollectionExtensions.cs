@@ -1,4 +1,5 @@
 using System.Reflection;
+using Forbids;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,10 +16,12 @@ public static class ServiceCollectionExtensions
     /// <summary>
     /// Injects <see cref="InjectableAttribute"/> decorated services from given assembly.
     /// </summary>
-    /// <param name="services"><see cref="IServiceCollection"/>.</param>
+    /// <param name="services">The <see cref="IServiceCollection"/>.</param>
     /// <param name="assemblies">Assemblies to search for injectable services.</param>
     public static IServiceCollection InjectServices(this IServiceCollection services, params Assembly[] assemblies)
     {
+        Forbid.From.Null(services);
+        Forbid.From.NullOrEmpty(assemblies);
         foreach (var assembly in assemblies)
         {
             InjectInjectableTypes(services, assembly);
@@ -55,13 +58,7 @@ public static class ServiceCollectionExtensions
         if (!configurableTypes.Any())
             return;
         
-        var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
-
-        if (configuration is null)
-        {
-            throw new ArgumentNullException(nameof(IConfiguration));
-        }
-            
+        var configuration = Forbid.From.Null(services.BuildServiceProvider().GetService<IConfiguration>());
         foreach (var configurableType in configurableTypes)
         {
             var customAttribute = (configurableType.GetCustomAttribute(typeof(ConfigureAttribute)) as ConfigureAttribute)!;

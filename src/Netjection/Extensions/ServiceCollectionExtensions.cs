@@ -63,7 +63,7 @@ public static class ServiceCollectionExtensions
             var sectionName = customAttribute.SectionName ?? configurableType.Name;
             var instance = Activator.CreateInstance(configurableType);
             configuration.Bind(sectionName, instance);
-            services.AddSingleton(configurableType, instance);
+            services.AddSingleton(configurableType, instance!);
         }
     }
 }

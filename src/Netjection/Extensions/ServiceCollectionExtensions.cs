@@ -22,15 +22,12 @@ public static class ServiceCollectionExtensions
     {
         Forbid.From.Null(services);
         Forbid.From.NullOrEmpty(assemblies);
-        foreach (var assembly in assemblies)
-        {
-            services.InjectByAttributes(assembly, 
-                new InjectAsSingleton(),
-                new InjectAsScoped(),
-                new InjectAsTransient(),
-                new InjectableAttribute());
-            services.AddConfigurableTypes(assembly);
-        }
+        services.InjectByAttributes(assemblies,
+            new InjectAsSingleton(),
+            new InjectAsScoped(),
+            new InjectAsTransient(),
+            new InjectableAttribute());
+        services.AddConfigurableTypes(assemblies);
         return services;
     }
 
@@ -38,17 +35,22 @@ public static class ServiceCollectionExtensions
     /// Injects types into DI Container by attributes
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/>.</param>
-    /// <param name="assembly">Assemblies to search for injectable services.</param>
+    /// <param name="assemblies">Assemblies to search for injectable services.</param>
     /// <param name="attributes">Attributes by which decorated types should be injected.</param>
-    private static void InjectByAttributes(this IServiceCollection services, Assembly assembly, params InjectableBaseAttribute[] attributes)
+    private static void InjectByAttributes(this IServiceCollection services, Assembly[] assemblies, params InjectableBaseAttribute[] attributes)
     {
         Forbid.From.NullOrEmpty(attributes);
-        var descriptors = (from attribute in attributes 
-            let injectableTypes = InjectableTypesProvider.Provide(assembly, attribute.GetType()) 
-            from type in injectableTypes 
-            let implementationType = type.GetImplementationType(assembly, attribute) 
-            let lifetime = type.GetLifetime(attribute) 
-            select new ServiceDescriptor(type, implementationType, lifetime)).ToList();
+        var descriptors = new List<ServiceDescriptor>();
+        foreach (var assembly in assemblies)
+        {
+            var currentAssemblyDescriptors = (from attribute in attributes
+                let injectableTypes = InjectableTypesProvider.Provide(assembly, attribute.GetType())
+                from type in injectableTypes
+                let implementationType = type.GetImplementationType(assemblies, attribute)
+                let lifetime = type.GetLifetime(attribute)
+                select new ServiceDescriptor(type, implementationType, lifetime)).ToList();
+            descriptors.AddRange(currentAssemblyDescriptors);
+        }
 
         services.TryAdd(descriptors);
     }
@@ -57,23 +59,27 @@ public static class ServiceCollectionExtensions
     /// Injects <see cref="ConfigureAttribute"/> decorated classes into DI Container.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/>.</param>
-    /// <param name="assembly">Assemblies to search for injectable services.</param>
-    private static void AddConfigurableTypes(this IServiceCollection services,Assembly assembly)
+    /// <param name="assemblies">Assemblies to search for injectable services.</param>
+    private static void AddConfigurableTypes(this IServiceCollection services,Assembly[] assemblies)
     {
-        var configurableTypes = assembly.GetTypes()
-            .Where(type => type.GetCustomAttributes(typeof(ConfigureAttribute), true).Length > 0)
-            .ToList();
-        if (!configurableTypes.Any())
-            return;
-        
-        var configuration = Forbid.From.Null(services.BuildServiceProvider().GetService<IConfiguration>());
-        foreach (var configurableType in configurableTypes)
+        foreach (var assembly in assemblies)
         {
-            var customAttribute = (configurableType.GetCustomAttribute(typeof(ConfigureAttribute)) as ConfigureAttribute)!;
-            var sectionName = customAttribute.SectionName ?? configurableType.Name;
-            var instance = Activator.CreateInstance(configurableType);
-            configuration.Bind(sectionName, instance);
-            services.AddSingleton(configurableType, instance!);
+            var configurableTypes = assembly.GetTypes()
+                .Where(type => type.GetCustomAttributes(typeof(ConfigureAttribute), true).Length > 0)
+                .ToList();
+            if (!configurableTypes.Any())
+                return;
+
+            var configuration = Forbid.From.Null(services.BuildServiceProvider().GetService<IConfiguration>());
+            foreach (var configurableType in configurableTypes)
+            {
+                var customAttribute =
+                    (configurableType.GetCustomAttribute(typeof(ConfigureAttribute)) as ConfigureAttribute)!;
+                var sectionName = customAttribute.SectionName ?? configurableType.Name;
+                var instance = Activator.CreateInstance(configurableType);
+                configuration.Bind(sectionName, instance);
+                services.AddSingleton(configurableType, instance!);
+            }
         }
     }
 }

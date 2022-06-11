@@ -12,15 +12,23 @@ internal static class TypeExtensions
     /// Retrieves implementation type for injectable interface.
     /// </summary>
     /// <param name="injectableType">The interface to search implementation for.</param>
-    /// <param name="assembly">Assembly to search for implementation type.</param>
+    /// <param name="assemblies">Assemblies to search for implementation type.</param>
     /// <param name="attribute">The attribute type of <see cref="InjectableBaseAttribute"/>.</param>
     /// <returns>Implementation type.</returns>
-    internal static Type GetImplementationType(this Type injectableType,Assembly assembly, InjectableBaseAttribute attribute)
+    internal static Type GetImplementationType(this Type injectableType,Assembly[] assemblies, InjectableBaseAttribute attribute)
     {
-        return injectableType.IsInterface
-            ? (injectableType.GetCustomAttribute(attribute.GetType()) as InjectableBaseAttribute)?.ImplementationType 
-              ?? assembly.GetTypes().FirstOrDefault(type1 => type1.Name == injectableType.Name.Remove(0, 1))!
-            : injectableType;
+        Type? implementationType = null;
+        foreach (var assembly in assemblies)
+        {
+            implementationType = injectableType.IsInterface
+                ? (injectableType.GetCustomAttribute(attribute.GetType()) as InjectableBaseAttribute)?.ImplementationType 
+                  ?? assembly.GetTypes().FirstOrDefault(type1 => type1.Name == injectableType.Name.Remove(0, 1))!
+                : null;
+            if (implementationType is not null)
+                return implementationType;
+        }
+
+        return implementationType ?? injectableType;
     }
     
     /// <summary>

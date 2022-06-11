@@ -10,7 +10,7 @@ public class TypeProviderTests
     [Fact]
     public void Should_Retrieve_All_Interface_With_Attribute()
     {
-        var types = _typeProvider.Provide(Assembly.GetExecutingAssembly());
+        var types = _typeProvider.Provide(Assembly.GetExecutingAssembly(),typeof(InjectableAttribute));
         Assert.Equal(3,types.Count());
     }
     

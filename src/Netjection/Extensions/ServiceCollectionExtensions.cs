@@ -2,6 +2,7 @@ using System.Reflection;
 using Forbids;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Netjection;
 
@@ -11,7 +12,6 @@ namespace Netjection;
 public static class ServiceCollectionExtensions
 {
     private static readonly IInjectableTypesProvider InjectableTypesProvider = new InjectableTypesProvider();
-    private static readonly ITypeFilter TypeFilter = new TypeFilter();
 
     /// <summary>
     /// Injects <see cref="InjectableAttribute"/> decorated services from given assembly.
@@ -24,33 +24,41 @@ public static class ServiceCollectionExtensions
         Forbid.From.NullOrEmpty(assemblies);
         foreach (var assembly in assemblies)
         {
-            InjectInjectableTypes(services, assembly);
-            InjectByScope(services, assembly, new InjectAsSingleton());
-            InjectByScope(services, assembly, new InjectAsScoped());
-            InjectByScope(services, assembly, new InjectAsTransient());
-            services.AddConfigurables(assembly);
+            services.InjectByAttributes(assembly, 
+                new InjectAsSingleton(),
+                new InjectAsScoped(),
+                new InjectAsTransient(),
+                new InjectableAttribute());
+            services.AddConfigurableTypes(assembly);
         }
         return services;
     }
 
-    private static void InjectByScope<T>(IServiceCollection services, Assembly assembly,T attribute) where T : InjectableBaseAttribute =>
-        InjectableTypesProvider.Provide(assembly, typeof(T)).Select(type => new DescriptorInfo
-        {
-            ServiceType = type,
-            ImplementationType = type.IsInterface ? (type.GetCustomAttribute(typeof(T)) as T)?.ImplementationType
-                                                    ?? assembly.GetTypes().FirstOrDefault(type1 => type1.Name == type.Name.Remove(0, 1))! : type,
-            ServiceLifetime = attribute.MapToServiceLifetime()
-        }).Inject(services);
-
-    private static void InjectInjectableTypes(IServiceCollection services, Assembly assembly)
+    /// <summary>
+    /// Injects types into DI Container by attributes
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/>.</param>
+    /// <param name="assembly">Assemblies to search for injectable services.</param>
+    /// <param name="attributes">Attributes by which decorated types should be injected.</param>
+    private static void InjectByAttributes(this IServiceCollection services, Assembly assembly, params InjectableBaseAttribute[] attributes)
     {
-        var injectableTypes = InjectableTypesProvider.Provide(assembly);
-        TypeFilter.FilterByScope(injectableTypes, Lifetime.Singleton, assembly).Inject(services);
-        TypeFilter.FilterByScope(injectableTypes, Lifetime.Scoped, assembly).Inject(services);
-        TypeFilter.FilterByScope(injectableTypes, Lifetime.Transient, assembly).Inject(services);
+        Forbid.From.NullOrEmpty(attributes);
+        var descriptors = (from attribute in attributes 
+            let injectableTypes = InjectableTypesProvider.Provide(assembly, attribute.GetType()) 
+            from type in injectableTypes 
+            let implementationType = type.GetImplementationType(assembly, attribute) 
+            let lifetime = type.GetLifetime(attribute) 
+            select new ServiceDescriptor(type, implementationType, lifetime)).ToList();
+
+        services.TryAdd(descriptors);
     }
 
-    private static void AddConfigurables(this IServiceCollection services,Assembly assembly)
+    /// <summary>
+    /// Injects <see cref="ConfigureAttribute"/> decorated classes into DI Container.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/>.</param>
+    /// <param name="assembly">Assemblies to search for injectable services.</param>
+    private static void AddConfigurableTypes(this IServiceCollection services,Assembly assembly)
     {
         var configurableTypes = assembly.GetTypes()
             .Where(type => type.GetCustomAttributes(typeof(ConfigureAttribute), true).Length > 0)
@@ -65,7 +73,7 @@ public static class ServiceCollectionExtensions
             var sectionName = customAttribute.SectionName ?? configurableType.Name;
             var instance = Activator.CreateInstance(configurableType);
             configuration.Bind(sectionName, instance);
-            services.AddSingleton(configurableType, instance);
+            services.AddSingleton(configurableType, instance!);
         }
     }
 }

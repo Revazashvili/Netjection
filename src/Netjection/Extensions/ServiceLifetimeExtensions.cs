@@ -29,7 +29,7 @@ internal static class ServiceLifetimeExtensions
     /// <typeparam name="T">type of <see cref="InjectableBaseAttribute"/></typeparam>
     /// <returns><see cref="ServiceLifetime"/> that matches current instance of <see cref="Lifetime"/>.</returns>
     /// <exception cref="Exception"><see cref="Lifetime"/> does not match any <see cref="ServiceLifetime"/></exception>
-    internal static ServiceLifetime MapToServiceLifetime<T>(this T attribute) where T : InjectableBaseAttribute =>
+    internal static ServiceLifetime MapToServiceLifetime(this InjectableBaseAttribute attribute) =>
         attribute switch
         {
             InjectAsSingleton asSingleton => ServiceLifetime.Singleton,

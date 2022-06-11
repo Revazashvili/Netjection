@@ -69,6 +69,29 @@ public class DummyStorage
 }
 ```
 
+Netjection can map configuration with classes and inject as singleton in DI container.
+it will use class name to search configuration section, but you can specify custom section name
+in attribute constructor.
+```c#
+[Configure] // or [Configure("CustomSectionName")]
+public class Options
+{
+    public string Url { get; set; }
+    public int Port { get; set; }
+    public string UserName { get; set; }
+    public string Password { get; set; }
+}
+```
+
+```json
+"Options": {
+    "Url": "localhost",
+    "Port": 8080,
+    "UserName": "user",
+    "Password": "password"
+  }
+```
+
 and then use extension method on IServiceCollection to inject all service
 ```c#
 using Netjection

@@ -34,6 +34,12 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>
+    /// Injects types into DI Container by attributes
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/>.</param>
+    /// <param name="assembly">Assemblies to search for injectable services.</param>
+    /// <param name="attributes">Attributes by which decorated types should be injected.</param>
     private static void InjectByAttributes(this IServiceCollection services, Assembly assembly, params InjectableBaseAttribute[] attributes)
     {
         Forbid.From.NullOrEmpty(attributes);
@@ -47,6 +53,11 @@ public static class ServiceCollectionExtensions
         services.TryAdd(descriptors);
     }
 
+    /// <summary>
+    /// Injects <see cref="ConfigureAttribute"/> decorated classes into DI Container.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/>.</param>
+    /// <param name="assembly">Assemblies to search for injectable services.</param>
     private static void AddConfigurableTypes(this IServiceCollection services,Assembly assembly)
     {
         var configurableTypes = assembly.GetTypes()

@@ -28,7 +28,7 @@ public static class ServiceCollectionExtensions
             InjectByScope(services, assembly, new InjectAsSingleton());
             InjectByScope(services, assembly, new InjectAsScoped());
             InjectByScope(services, assembly, new InjectAsTransient());
-            services.AddConfigurables(assembly);
+            services.AddConfigurableTypes(assembly);
         }
         return services;
     }
@@ -50,7 +50,7 @@ public static class ServiceCollectionExtensions
         TypeFilter.FilterByScope(injectableTypes, Lifetime.Transient, assembly).Inject(services);
     }
 
-    private static void AddConfigurables(this IServiceCollection services,Assembly assembly)
+    private static void AddConfigurableTypes(this IServiceCollection services,Assembly assembly)
     {
         var configurableTypes = assembly.GetTypes()
             .Where(type => type.GetCustomAttributes(typeof(ConfigureAttribute), true).Length > 0)

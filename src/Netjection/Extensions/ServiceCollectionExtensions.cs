@@ -12,7 +12,6 @@ namespace Netjection;
 public static class ServiceCollectionExtensions
 {
     private static readonly IInjectableTypesProvider InjectableTypesProvider = new InjectableTypesProvider();
-    private static readonly ITypeFilter TypeFilter = new TypeFilter();
 
     /// <summary>
     /// Injects <see cref="InjectableAttribute"/> decorated services from given assembly.

@@ -26,7 +26,6 @@ internal static class ServiceLifetimeExtensions
     /// Maps <see cref="Lifetime"/> to <see cref="ServiceLifetime"/>
     /// </summary>
     /// <param name="attribute">The attribute type of <see cref="InjectableBaseAttribute"/>.</param>
-    /// <typeparam name="T">type of <see cref="InjectableBaseAttribute"/></typeparam>
     /// <returns><see cref="ServiceLifetime"/> that matches current instance of <see cref="Lifetime"/>.</returns>
     /// <exception cref="Exception"><see cref="Lifetime"/> does not match any <see cref="ServiceLifetime"/></exception>
     internal static ServiceLifetime MapToServiceLifetime(this InjectableBaseAttribute attribute) =>

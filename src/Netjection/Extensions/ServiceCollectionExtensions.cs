@@ -2,6 +2,7 @@ using System.Reflection;
 using Forbids;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Netjection;
 
@@ -25,22 +26,22 @@ public static class ServiceCollectionExtensions
         foreach (var assembly in assemblies)
         {
             InjectInjectableTypes(services, assembly);
-            InjectByScope(services, assembly, new InjectAsSingleton());
-            InjectByScope(services, assembly, new InjectAsScoped());
-            InjectByScope(services, assembly, new InjectAsTransient());
+            services.InjectByScope(assembly, new InjectAsSingleton(), new InjectAsScoped(), new InjectAsTransient());
             services.AddConfigurableTypes(assembly);
         }
         return services;
     }
 
-    private static void InjectByScope<T>(IServiceCollection services, Assembly assembly,T attribute) where T : InjectableBaseAttribute =>
-        InjectableTypesProvider.Provide(assembly, typeof(T)).Select(type => new DescriptorInfo
-        {
-            ServiceType = type,
-            ImplementationType = type.IsInterface ? (type.GetCustomAttribute(typeof(T)) as T)?.ImplementationType
-                                                    ?? assembly.GetTypes().FirstOrDefault(type1 => type1.Name == type.Name.Remove(0, 1))! : type,
-            ServiceLifetime = attribute.MapToServiceLifetime()
-        }).Inject(services);
+    private static void InjectByScope(this IServiceCollection services, Assembly assembly, params InjectableBaseAttribute[] attributes)
+    {
+        Forbid.From.NullOrEmpty(attributes);
+        var descriptors = (from attribute in attributes
+            let injectableTypes = InjectableTypesProvider.Provide(assembly, attribute.GetType())
+            from type in injectableTypes
+            let implementationType = type.GetImplementationType(assembly, attribute)
+            select new ServiceDescriptor(type, implementationType, attribute.MapToServiceLifetime())).ToList();
+        services.TryAdd(descriptors);
+    }
 
     private static void InjectInjectableTypes(IServiceCollection services, Assembly assembly)
     {

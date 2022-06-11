@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Netjection;
 
-internal static class LifetimeMapper
+internal static class ServiceLifetimeExtensions
 {
     internal static ServiceLifetime MapToServiceLifetime(this Lifetime lifetime) =>
         lifetime switch

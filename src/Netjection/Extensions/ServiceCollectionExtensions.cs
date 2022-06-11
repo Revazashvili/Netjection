@@ -25,30 +25,27 @@ public static class ServiceCollectionExtensions
         Forbid.From.NullOrEmpty(assemblies);
         foreach (var assembly in assemblies)
         {
-            InjectInjectableTypes(services, assembly);
-            services.InjectByScope(assembly, new InjectAsSingleton(), new InjectAsScoped(), new InjectAsTransient());
+            services.InjectByAttributes(assembly, 
+                new InjectAsSingleton(),
+                new InjectAsScoped(),
+                new InjectAsTransient(),
+                new InjectableAttribute());
             services.AddConfigurableTypes(assembly);
         }
         return services;
     }
 
-    private static void InjectByScope(this IServiceCollection services, Assembly assembly, params InjectableBaseAttribute[] attributes)
+    private static void InjectByAttributes(this IServiceCollection services, Assembly assembly, params InjectableBaseAttribute[] attributes)
     {
         Forbid.From.NullOrEmpty(attributes);
-        var descriptors = (from attribute in attributes
-            let injectableTypes = InjectableTypesProvider.Provide(assembly, attribute.GetType())
-            from type in injectableTypes
-            let implementationType = type.GetImplementationType(assembly, attribute)
-            select new ServiceDescriptor(type, implementationType, attribute.MapToServiceLifetime())).ToList();
-        services.TryAdd(descriptors);
-    }
+        var descriptors = (from attribute in attributes 
+            let injectableTypes = InjectableTypesProvider.Provide(assembly, attribute.GetType()) 
+            from type in injectableTypes 
+            let implementationType = type.GetImplementationType(assembly, attribute) 
+            let lifetime = type.GetLifetime(attribute) 
+            select new ServiceDescriptor(type, implementationType, lifetime)).ToList();
 
-    private static void InjectInjectableTypes(IServiceCollection services, Assembly assembly)
-    {
-        var injectableTypes = InjectableTypesProvider.Provide(assembly);
-        TypeFilter.FilterByScope(injectableTypes, Lifetime.Singleton, assembly).Inject(services);
-        TypeFilter.FilterByScope(injectableTypes, Lifetime.Scoped, assembly).Inject(services);
-        TypeFilter.FilterByScope(injectableTypes, Lifetime.Transient, assembly).Inject(services);
+        services.TryAdd(descriptors);
     }
 
     private static void AddConfigurableTypes(this IServiceCollection services,Assembly assembly)

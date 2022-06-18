@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Netjection.UnitTests.Configurables;
 using Netjection.UnitTests.SampleServices;
 using Xunit;
@@ -100,16 +101,45 @@ public class ServiceCollectionExtensionsTest
 
 
     [Fact]
-    public void Should_Inject_And_Resolve()
+    public void Should_Inject_And_Resolve_Configurable_Type()
     {
         var services = BuildServiceCollectionWithConfiguration();
         services.InjectServices(Assembly.GetExecutingAssembly());
 
         var serviceProvider = services.BuildServiceProvider();
         var test = serviceProvider.GetService<Test>();
+        CheckIfTestIsCorrectlyFilled(test);
+    }
+    
+    [Fact]
+    public void Should_Inject_And_Resolve_Configurable_Type_As_IOptions()
+    {
+        var services = BuildServiceCollectionWithConfiguration();
+        services.InjectServices(Assembly.GetExecutingAssembly());
+
+        var serviceProvider = services.BuildServiceProvider();
+        var testOptions = serviceProvider.GetService<IOptions<Test>>();
+        var test = testOptions!.Value;
+        CheckIfTestIsCorrectlyFilled(test);
+    }
+
+    [Fact]
+    public void Should_Inject_And_Resolve_Configurable_Type_As_IOptionsSnapshot()
+    {
+        var services = BuildServiceCollectionWithConfiguration();
+        services.InjectServices(Assembly.GetExecutingAssembly());
+
+        var serviceProvider = services.BuildServiceProvider();
+        var testOptions = serviceProvider.GetService<IOptionsSnapshot<Test>>();
+        var test = testOptions!.Value;
+        CheckIfTestIsCorrectlyFilled(test);
+    }
+    
+    private static void CheckIfTestIsCorrectlyFilled(Test test)
+    {
         Assert.NotNull(test);
         Assert.NotEmpty(test.Property1);
-        Assert.Equal(23,test.Property2);
+        Assert.Equal(23, test.Property2);
         Assert.NotEmpty(test.Property3);
     }
 }

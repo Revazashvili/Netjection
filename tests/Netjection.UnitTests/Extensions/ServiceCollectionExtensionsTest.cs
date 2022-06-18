@@ -100,7 +100,7 @@ public class ServiceCollectionExtensionsTest
 
 
     [Fact]
-    public void Should_Inject_And_Resolve()
+    public void Should_Inject_And_Resolve_Configurable_Type()
     {
         var services = BuildServiceCollectionWithConfiguration();
         services.InjectServices(Assembly.GetExecutingAssembly());

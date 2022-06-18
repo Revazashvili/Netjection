@@ -14,11 +14,11 @@ If you like or are using this project please give it a star. Thanks!
 ## Installing
 Using dotnet cli
 ```
-dotnet add package Netjection --version 1.0.6
+dotnet add package Netjection --version 1.0.7
 ```
 or package reference
 ```
-<PackageReference Include="Netjection" Version="1.0.6" />
+<PackageReference Include="Netjection" Version="1.0.7" />
 ```
 
 ## Usage

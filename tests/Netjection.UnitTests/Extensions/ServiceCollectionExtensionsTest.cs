@@ -128,4 +128,19 @@ public class ServiceCollectionExtensionsTest
         Assert.Equal(23,test.Property2);
         Assert.NotEmpty(test.Property3);
     }
+    
+    [Fact]
+    public void Should_Inject_And_Resolve_Configurable_Type_As_IOptionsSnapshot()
+    {
+        var services = BuildServiceCollectionWithConfiguration();
+        services.InjectServices(Assembly.GetExecutingAssembly());
+
+        var serviceProvider = services.BuildServiceProvider();
+        var testOptions = serviceProvider.GetService<IOptionsSnapshot<Test>>();
+        var test = testOptions!.Value;
+        Assert.NotNull(test);
+        Assert.NotEmpty(test.Property1);
+        Assert.Equal(23,test.Property2);
+        Assert.NotEmpty(test.Property3);
+    }
 }

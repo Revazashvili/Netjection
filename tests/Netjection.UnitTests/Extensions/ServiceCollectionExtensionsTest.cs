@@ -108,10 +108,7 @@ public class ServiceCollectionExtensionsTest
 
         var serviceProvider = services.BuildServiceProvider();
         var test = serviceProvider.GetService<Test>();
-        Assert.NotNull(test);
-        Assert.NotEmpty(test.Property1);
-        Assert.Equal(23,test.Property2);
-        Assert.NotEmpty(test.Property3);
+        CheckIfTestIsCorrectlyFilled(test);
     }
     
     [Fact]
@@ -123,12 +120,9 @@ public class ServiceCollectionExtensionsTest
         var serviceProvider = services.BuildServiceProvider();
         var testOptions = serviceProvider.GetService<IOptions<Test>>();
         var test = testOptions!.Value;
-        Assert.NotNull(test);
-        Assert.NotEmpty(test.Property1);
-        Assert.Equal(23,test.Property2);
-        Assert.NotEmpty(test.Property3);
+        CheckIfTestIsCorrectlyFilled(test);
     }
-    
+
     [Fact]
     public void Should_Inject_And_Resolve_Configurable_Type_As_IOptionsSnapshot()
     {
@@ -138,9 +132,14 @@ public class ServiceCollectionExtensionsTest
         var serviceProvider = services.BuildServiceProvider();
         var testOptions = serviceProvider.GetService<IOptionsSnapshot<Test>>();
         var test = testOptions!.Value;
+        CheckIfTestIsCorrectlyFilled(test);
+    }
+    
+    private static void CheckIfTestIsCorrectlyFilled(Test test)
+    {
         Assert.NotNull(test);
         Assert.NotEmpty(test.Property1);
-        Assert.Equal(23,test.Property2);
+        Assert.Equal(23, test.Property2);
         Assert.NotEmpty(test.Property3);
     }
 }

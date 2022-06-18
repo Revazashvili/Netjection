@@ -1,8 +1,10 @@
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Forbids;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Netjection.Helpers;
 
 namespace Netjection;
 
@@ -71,6 +73,9 @@ public static class ServiceCollectionExtensions
                 return;
 
             var configuration = Forbid.From.Null(services.BuildServiceProvider().GetService<IConfiguration>());
+            
+            var configureMethodInfo = AssemblyHelpers.GetMethodInfoCalledConfigure();
+            
             foreach (var configurableType in configurableTypes)
             {
                 var customAttribute =
@@ -79,6 +84,20 @@ public static class ServiceCollectionExtensions
                 var instance = Activator.CreateInstance(configurableType);
                 configuration.Bind(sectionName, instance);
                 services.AddSingleton(configurableType, instance!);
+
+                // Injects as IOptions or IOptionsSnapshot
+                if (configureMethodInfo is null) 
+                    continue;
+                try
+                {
+                    var genericMethodInfo = configureMethodInfo.MakeGenericMethod(configurableType);
+                    genericMethodInfo.Invoke(services,
+                        new object?[] { services, configuration!.GetSection(sectionName) });
+                }
+                catch
+                {
+                    // ignored
+                }
             }
         }
     }

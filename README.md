@@ -1,4 +1,4 @@
-# Netjection
+# <img src="injection.png" height="40px" /> Netjection
 .Net package to automatically inject attribute decorated services into IOC Container
 
 [![.NET](https://img.shields.io/badge/--512BD4?logo=.net&logoColor=ffffff)](https://dotnet.microsoft.com/)
@@ -140,4 +140,7 @@ Contributions are what make the open source community such an amazing place to b
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+
+## Icon
+[injection](https://thenounproject.com/icon/injection-5200198) by VectorsLab from <a href="https://thenounproject.com/browse/icons/term/injection/" target="_blank" title="injection Icons">Noun Project</a>
 

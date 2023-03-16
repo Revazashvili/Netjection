@@ -16,16 +16,17 @@ internal static class AssemblyHelpers
     {
         try
         {
-            return (from type in assembly.GetTypes()
-                where type.IsSealed && !type.IsGenericType && !type.IsNested
-                from method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                where method.IsDefined(typeof(ExtensionAttribute), false) 
-                      && method.GetParameters()[0].ParameterType == typeof(IServiceCollection)
-                select method).FirstOrDefault(x => x.Name == methodName);
+            return assembly.GetTypes()
+                .Where(type => type is { IsSealed: true, IsGenericType: false, IsNested: false })
+                .SelectMany(type => type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(method => method.IsDefined(typeof(ExtensionAttribute), false)
+                                     && method.GetParameters().Length > 0
+                                     && method.GetParameters()[0].ParameterType == typeof(IServiceCollection)
+                                     && method.Name == methodName))
+                .FirstOrDefault();
         }
-        catch (Exception)
+        catch
         {
-            // ignored
             return null;
         }
     }

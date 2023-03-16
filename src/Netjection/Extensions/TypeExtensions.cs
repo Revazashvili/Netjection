@@ -37,10 +37,8 @@ internal static class TypeExtensions
     /// <param name="injectableType">The interface to search implementation for.</param>
     /// <param name="attribute">The attribute type of <see cref="InjectableBaseAttribute"/>.</param>
     /// <returns>Service lifetime</returns>
-    internal static ServiceLifetime GetLifetime(this Type injectableType,InjectableBaseAttribute attribute)
-    {
-        return attribute.GetType() == typeof(InjectableAttribute) 
+    internal static ServiceLifetime GetLifetime(this Type injectableType,InjectableBaseAttribute attribute) =>
+        attribute.GetType() == typeof(InjectableAttribute) 
             ? (injectableType.GetCustomAttribute(typeof(InjectableAttribute)) as InjectableAttribute)!.Lifetime.MapToServiceLifetime() :
             attribute.MapToServiceLifetime();
-    }
 }

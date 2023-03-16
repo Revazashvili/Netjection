@@ -10,5 +10,5 @@ internal interface IInjectableTypesProvider
     /// <param name="assembly">Assembly to search for injectable services.</param>
     /// <param name="attributeType">The attribute type of <see cref="InjectableBaseAttribute"/>.</param>
     /// <returns>Attribute decorated types from assembly.</returns>
-    IEnumerable<Type> Provide(Assembly assembly,Type attributeType);
+    IEnumerable<Type> GetTypesWithAttribute(Assembly assembly,Type attributeType);
 }

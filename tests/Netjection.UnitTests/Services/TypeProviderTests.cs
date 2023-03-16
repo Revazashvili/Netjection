@@ -10,28 +10,28 @@ public class TypeProviderTests
     [Fact]
     public void Should_Retrieve_All_Interface_With_Attribute()
     {
-        var types = _typeProvider.Provide(Assembly.GetExecutingAssembly(),typeof(InjectableAttribute));
+        var types = _typeProvider.GetTypesWithAttribute(Assembly.GetExecutingAssembly(),typeof(InjectableAttribute));
         Assert.Equal(3,types.Count());
     }
     
     [Fact]
     public void Should_Retrieve_All_Interface_With_InjectAsSingletonAttribute()
     {
-        var types = _typeProvider.Provide(Assembly.GetExecutingAssembly(),typeof(InjectAsSingleton));
+        var types = _typeProvider.GetTypesWithAttribute(Assembly.GetExecutingAssembly(),typeof(InjectAsSingleton));
         Assert.Single(types);
     }
     
     [Fact]
     public void Should_Retrieve_All_Interface_With_InjectAsScopedAttribute()
     {
-        var types = _typeProvider.Provide(Assembly.GetExecutingAssembly(),typeof(InjectAsSingleton));
+        var types = _typeProvider.GetTypesWithAttribute(Assembly.GetExecutingAssembly(),typeof(InjectAsSingleton));
         Assert.Single(types);
     }
     
     [Fact]
     public void Should_Retrieve_All_Interface_With_InjectAsTransientAttribute()
     {
-        var types = _typeProvider.Provide(Assembly.GetExecutingAssembly(),typeof(InjectAsSingleton));
+        var types = _typeProvider.GetTypesWithAttribute(Assembly.GetExecutingAssembly(),typeof(InjectAsSingleton));
         Assert.Single(types);
     }
 }

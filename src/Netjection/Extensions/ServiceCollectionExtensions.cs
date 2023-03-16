@@ -46,7 +46,7 @@ public static class ServiceCollectionExtensions
         foreach (var assembly in assemblies)
         {
             var currentAssemblyDescriptors = (from attribute in attributes
-                let injectableTypes = InjectableTypesProvider.Provide(assembly, attribute.GetType())
+                let injectableTypes = InjectableTypesProvider.GetTypesWithAttribute(assembly, attribute.GetType())
                 from type in injectableTypes
                 let implementationType = type.GetImplementationType(assemblies, attribute)
                 let lifetime = type.GetLifetime(attribute)

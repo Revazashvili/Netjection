@@ -39,6 +39,6 @@ internal static class TypeExtensions
     /// <returns>Service lifetime</returns>
     internal static ServiceLifetime GetLifetime(this Type injectableType,InjectableBaseAttribute attribute) =>
         attribute.GetType() == typeof(InjectableAttribute) 
-            ? (injectableType.GetCustomAttribute(typeof(InjectableAttribute)) as InjectableAttribute)!.Lifetime.MapToServiceLifetime() :
+            ? injectableType.GetCustomAttribute<InjectableAttribute>()!.Lifetime.MapToServiceLifetime() :
             attribute.MapToServiceLifetime();
 }
